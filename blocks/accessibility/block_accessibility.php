@@ -19,7 +19,7 @@
  *
  * @package    block_accessibility
  * @author      Mark Johnson <mark.johnson@tauntons.ac.uk>
- * @copyright   2010 Tauntons College, UK
+ * @author      Angela Castro Jimenez
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -36,6 +36,12 @@ class block_accessibility extends block_base {
     const FONTSIZE_URL = '/blocks/accessibility/changesize.php';
     const COLOUR_URL = '/blocks/accessibility/changecolour.php';
     const DB_URL = '/blocks/accessibility/database.php';
+
+    /*
+    * Constantes para el bloque personalizado
+    */
+    const FILTER_COLOUR_URL = '/blocks/accessibility/colourfilter.php';
+    const CONTRAST = '/blocks/accessibility/changecontrast.php';
 
     /**
      * Set the title and include the stylesheet
@@ -121,24 +127,29 @@ class block_accessibility extends block_base {
         $incattrs = array(
                 'title' => get_string('inctext', 'block_accessibility'),
                 'id' => "block_accessibility_inc",
-                'href' => $sizeurl->out(false, array('op' => 'inc'))
+                'href' => $sizeurl->out(false, array('op' => 'inc')),
+                'tabindex'=>'0'
+
         );
         $decattrs = array(
                 'title' => get_string('dectext', 'block_accessibility'),
                 'id' => "block_accessibility_dec",
-                'href' => $sizeurl->out(false, array('op' => 'dec'))
+                'href' => $sizeurl->out(false, array('op' => 'dec')),
+                'tabindex'=>'0'
         );
         $saveattrs = array(
                 'title' => get_string('save', 'block_accessibility'),
                 'id' => "block_accessibility_save",
-                'href' => $dburl->out(false)
+                'href' => $dburl->out(false),
+                'tabindex'=>'0'
         );
 
         // Initialization of reset button.
         $resetattrs = array(
                 'id' => 'block_accessibility_reset',
                 'title' => get_string('resettext', 'block_accessibility'),
-                'href' => $sizeurl->out(false, array('op' => 'reset'))
+                'href' => $sizeurl->out(false, array('op' => 'reset')),
+                'tabindex'=>'0'
         );
 
         // If any of increase/decrease buttons reached maximum size, disable it.
@@ -160,25 +171,29 @@ class block_accessibility extends block_base {
         $c1attrs = array(
                 'title' => get_string('col1text', 'block_accessibility'),
                 'id' => 'block_accessibility_colour1',
-                'href' => $coloururl->out(false, array('scheme' => 1))
+                'href' => $coloururl->out(false, array('scheme' => 1)),
+                'tabindex'=>'0'
         );
         $c2attrs = array(
                 'title' => get_string('col2text', 'block_accessibility'),
                 'id' => 'block_accessibility_colour2',
-                'href' => $coloururl->out(false, array('scheme' => 2))
+                'href' => $coloururl->out(false, array('scheme' => 2)),
+                'tabindex'=>'0'
         );
         $c3attrs = array(
                 'title' => get_string('col3text', 'block_accessibility'),
                 'id' => 'block_accessibility_colour3',
-                'href' => $coloururl->out(false, array('scheme' => 3))
+                'href' => $coloururl->out(false, array('scheme' => 3)),
+                'tabindex'=>'0'
         );
         $c4attrs = array(
                 'title' => get_string('col4text', 'block_accessibility'),
                 'id' => 'block_accessibility_colour4',
-                'href' => $coloururl->out(false, array('scheme' => 4))
+                'href' => $coloururl->out(false, array('scheme' => 4)),
+                'tabindex'=>'0'
         );
 
-        if (!isset($USER->colourscheme)) {
+        if (!isset($USER->colourscheme) && !isset($USER->colourfondo) && !isset($USER->colourletra)) {
             $c1attrs['class'] = 'disabled';
         }
 
@@ -197,6 +212,8 @@ class block_accessibility extends block_base {
         $divattrs = array('id' => 'accessibility_controls', 'class' => 'content');
         $listattrs = array('id' => 'block_accessibility_textresize', 'class' => 'button_row');
 
+
+
         $content .= html_writer::start_tag('div', $divattrs);
         $content .= html_writer::start_tag('ul', $listattrs);
 
@@ -205,7 +222,7 @@ class block_accessibility extends block_base {
         $content .= html_writer::end_tag('li');
 
         $content .= html_writer::start_tag('li', array('class' => 'access-button'));
-        $content .= html_writer::tag('a', $strchar, $resetattrs);
+        $content .= html_writer::tag('a', $strchar,  $resetattrs);
         $content .= html_writer::end_tag('li');
 
         $content .= html_writer::start_tag('li', array('class' => 'access-button'));
@@ -241,6 +258,328 @@ class block_accessibility extends block_base {
 
         $content .= html_writer::end_tag('ul');
 
+
+        /*
+         * Bloque personalizado
+         */
+
+        //Inicialización del botón de selección del color de fondo
+        $attr_colorpicker_fondo = array(
+            'name'=> get_string('cpbackground', 'block_accessibility'),
+            'title'=> get_string('cpbackground', 'block_accessibility'),
+            'id' => 'boton-color-picker-fondo',
+            'type' => 'color',
+        );
+
+        //Inicialización del botón de selección del color de letra
+        $attr_colorpicker_letra = array(
+            'name'=> get_string('cpfont', 'block_accessibility'),
+            'title'=> get_string('cpfont', 'block_accessibility'),
+            'id' => 'boton-color-picker-letra',
+            'type' => 'color',
+        );
+
+        //Se establece el color que aparece en los botones
+        if (isset($USER->colourfondo)) {
+            $attr_colorpicker_fondo['value'] = "#".$USER->colourfondo;
+        }else{
+            $attr_colorpicker_fondo['class'] = 'startEmpty';
+            $attr_colorpicker_fondo['value'] = "#FFFFFF";
+        }
+
+        if (isset($USER->colourletra)) {
+            $attr_colorpicker_letra['value'] = "#".$USER->colourletra;
+        }else{
+            $attr_colorpicker_letra['class'] = 'startEmpty';
+            $attr_colorpicker_letra['value'] = "#000000";
+        }
+
+
+        //Botón de selección de color de fondo
+        $content .= html_writer::start_tag('ul', array('id' => 'block_accessibility_filter'));
+        $content .= html_writer::start_tag('li', array('class' => 'access-button'));
+        $content .= html_writer::tag('input', null, $attr_colorpicker_fondo);
+        $content .= html_writer::end_tag('li');
+
+        //Botón de selección de color de letra
+        $content .= html_writer::start_tag('li', array('class' => 'access-button'));
+        $content .= html_writer::tag('input', null, $attr_colorpicker_letra);
+        $content .= html_writer::end_tag('li');
+
+
+        $filterurl = new moodle_url(self::FILTER_COLOUR_URL, $params);
+        $options = $DB->get_record('block_accessibility', array('userid' => $USER->id));
+
+
+        //Inicializacion del botón de filtro de color
+        $attr_colorpicker = array(
+               // 'name'=> get_string('cfilter', 'block_accessibility'),
+                //'title'=> 'Establecer filtro de color',
+                'id' => 'boton-color-picker',
+                'type' => 'text'
+        );
+
+
+
+        if (!isset($USER->colourfilter)) {
+            if(!empty($options->colourfilter)){
+                $colorfilter = unserialize($options->colourfilter);
+                $USER->colourfilter = $colorfilter;
+            }
+        }
+
+        //Se establece el aspecto del botón en base a la configuración
+        if(isset($USER->colourfilter)) {
+            $stringTransparencia = "opacity:".$USER->colourfilter['t'].";";
+            $stringBackgroundColor = "background-color:rgb(".$USER->colourfilter["r"].",".$USER->colourfilter["g"].",".$USER->colourfilter["b"].")!important;";
+            $content .= html_writer::tag('div',"",
+                array(
+                'style' => 'position:fixed; width:100%;height:100%; z-index: 22147483640; pointer-events:none; top:0; left:0;'.$stringTransparencia.$stringBackgroundColor,
+                'id' => "colourfilterpersonalizado"
+            ));
+            $attr_colorpicker['value'] = "rgba(".$USER->colourfilter['r'].",".$USER->colourfilter['g'].",".$USER->colourfilter['b'].",".$USER->colourfilter['t'].")";
+        }else{
+            $attr_colorpicker['class'] = 'startEmpty';
+            $attr_colorpicker['value'] = "";
+        }
+
+        //Botón de selección de filtro de color
+        $content .= html_writer::start_tag('li', array('class' => 'access-button'));
+        $content .= html_writer::tag('input', null, $attr_colorpicker);
+        $content .= html_writer::end_tag('li');
+
+        $content .= html_writer::end_tag('ul');
+        $this->page->requires->css('/blocks/accessibility/colourpicker/spectrum.css', true);
+
+
+       //Inicialización del selector de fuente
+        $attr_selectfont = array(
+            'title'=> get_string('setfuente', 'block_accessibility'),
+            'id' => 'select-family-custom-accessibility',
+            'name'=> get_string('listafuentes', 'block_accessibility')
+        );
+
+        //Botón de selección de fuente
+        $content .= html_writer::start_tag('ul', array('id' => 'block_accessibility_family'));
+        $content .= html_writer::start_tag('li', array('class' => 'access-button'));
+        $content .= html_writer::start_tag('select', $attr_selectfont);
+
+        $attr_font_family = [
+          'Defecto', 'Dyslexic', 'Open Sans', 'sans-serif', 'serif',
+        ];
+        foreach($attr_font_family as $key){
+            if(isset($USER->fontfamily) && $USER->fontfamily == $key){
+                $selected = "selected";
+            }else{
+                $selected = "";
+            }
+            $content .= html_writer::tag('option', $key,['value' => $key, $selected => true] );
+        }
+
+        $content .= html_writer::end_tag('select');
+        $content .= html_writer::end_tag('li');
+        $content .= html_writer::end_tag('ul');
+
+
+        //Inicialización del selector de interlineado
+        $attr_selectlineheight = array(
+            'title'=> get_string('setEspaciado', 'block_accessibility'),
+            'id' => 'select-line-height-custom-accessibility',
+            'name'=> get_string('listaEspaciados', 'block_accessibility')
+        );
+
+
+        //Botón interlineado
+        $content .= html_writer::start_tag('ul', array('id' => 'block_accessibility_line_height'));
+        $content .= html_writer::start_tag('li', array('class' => 'access-button'));
+        $content .= html_writer::start_tag('select', $attr_selectlineheight);
+
+        $attr_line_height = [
+                'Defecto','1.5','2', '3',
+        ];
+        foreach($attr_line_height as $key){
+            if(isset($USER->lineheight) && $USER->lineheight == $key){
+                $selected = "selected";
+            }else{
+                $selected = "";
+            }
+            $content .= html_writer::tag('option', $key,['value' => $key, $selected => true] );
+        }
+
+        $content .= html_writer::end_tag('select');
+        $content .= html_writer::end_tag('li');
+        $content .= html_writer::end_tag('ul');
+
+
+        //Inicialización del selector de interlineado
+        $attr_selectWordSpacing = array(
+            'title'=> get_string('setEspaciadoPalabra', 'block_accessibility'),
+            'id' => 'select-word-spacing-custom-accessibility',
+            'name'=> get_string('listaEspaciadosPalabra', 'block_accessibility')
+        );
+
+        //Botón espaciado entre letras
+        $content .= html_writer::start_tag('ul', array('id' => 'block_accessibility_word_spacing'));
+        $content .= html_writer::start_tag('li', array('class' => 'access-button'));
+        $content .= html_writer::start_tag('select', $attr_selectWordSpacing);
+
+        $attr_word_spacing = [
+                'Defecto','0.16','0.32', '0.5',
+        ];
+
+        foreach($attr_word_spacing as $key){
+            if(isset($USER->wordspacing) && $USER->wordspacing == $key){
+                $selected = "selected";
+            }else{
+                $selected = "";
+            }
+            $content .= html_writer::tag('option', $key,['value' => $key, $selected => true] );
+        }
+
+        $content .= html_writer::end_tag('select');
+        $content .= html_writer::end_tag('li');
+        $content .= html_writer::end_tag('ul');
+
+
+        //Apoyo lectura
+        if(isset($USER->readerline) && $USER->readerline){
+            $texto_button_reader_line = "Apoyo Lectura";
+            $class_button_reader_line = "reader-line-active";
+        }else{
+            $texto_button_reader_line = "Apoyo Lectura";
+            $class_button_reader_line = "";
+        }
+
+        //Inicialización del botón apoyo lectura
+        $attr_reader_line = array(
+            'title'=> get_string('setReaderLine', 'block_accessibility'),
+            'id' => 'reader-line-custom-accessibility',
+            'name'=> get_string('ReaderLine', 'block_accessibility'),
+            'class'=> $class_button_reader_line
+        );
+
+        //Botón apoyo de lectura
+        $content .= html_writer::start_tag('ul', array('id' => 'block_accessibility_reader_line'));
+        $content .= html_writer::start_tag('li', array('class' => 'access-button'));
+        $content .= html_writer::tag('button',$texto_button_reader_line, $attr_reader_line);
+
+        $content .= html_writer::end_tag('li');
+        $content .= html_writer::end_tag('ul');
+
+        //Cambiar cursor
+        if(isset($USER->changecursor) && $USER->changecursor){
+            $texto_button_change_cursor = "Cursor Normal";
+            $class_button_change_cursor = "cursor-activo";
+        }else{
+            $texto_button_change_cursor = "Cursor Grande";
+            $class_button_change_cursor = "";
+        }
+
+        //Inicialización del botón modo cine
+        $attr_cursor = array(
+                'title'=> get_string('cambiarCursor', 'block_accessibility'),
+                'id' => 'change-cursor-custom-accessibility',
+                'name'=> get_string('cursor', 'block_accessibility'),
+                'class'=> $class_button_change_cursor
+        );
+
+        $content .= html_writer::start_tag('ul', array('id' => 'block_accessibility_change_cursor'));
+        $content .= html_writer::start_tag('li', array('class' => 'access-button'));
+        $content .= html_writer::tag('button',$texto_button_change_cursor, $attr_cursor);
+
+        $content .= html_writer::end_tag('li');
+        $content .= html_writer::end_tag('ul');
+
+
+        $attr_alarm=array('id'=> 'alarm-custom-accessibility');
+
+
+        if(isset($USER->alarm) && $USER->alarm){
+            $attr_alarm['value'] = date("H : i",$USER->alarm);
+            $attr_alarm['disabled'] = "true";
+            $texto_button_alarm = "Borrar Alarma";
+            $clase_alarm = "alarm-activo";
+
+        }else{
+            $attr_alarm['value'] = "";
+            $clase_alarm ="";
+            $texto_button_alarm = "Fijar Alarma";
+        }
+
+        $attr_alarma=array(
+                'title'=> get_string('setAlarma', 'block_accessibility'),
+                'id' => 'alarm-button-custom-accessibility',
+                'name'=> get_string('alarma', 'block_accessibility'),
+                'class'=> $clase_alarm
+        );
+        $this->page->requires->css('/blocks/accessibility/hourpicker/wickedpicker.css', true);
+
+        //Botón de alarma
+        $content .= html_writer::start_tag('ul', array('id' => 'block_accessibility_alarm'));
+        $content .= html_writer::start_tag('li', array('class' => 'access-button'));
+        $content .= html_writer::tag('input',null, $attr_alarm);
+
+        $content .= html_writer::tag('button',$texto_button_alarm, $attr_alarma);
+
+        $content .= html_writer::end_tag('li');
+        $content .= html_writer::end_tag('ul');
+
+
+        //Efecto Cine (modo foco)
+
+        $content .= html_writer::tag('div',"",array(
+            'style' => 'position:fixed; width:100%;height:100%; z-index: 99998; top:0; left:0;background-color:rgb(133,133,133)!important;opacity:0.8',
+            'id' => "modo-cinema"
+        ));
+        if(isset($USER->cinema) && $USER->cinema){
+            $texto_button_cinema = "Modo Cine";
+            $clase_cinema = "cinema-activo";
+        }else{
+            $attr_alarm['value'] = "";
+            $clase_cinema ="";
+            $texto_button_cinema = "Modo Cine";
+        }
+
+        //Inicialización del botón modo cine
+        $attr_cine = array(
+            'title'=> get_string('modoCine', 'block_accessibility'),
+            'id' => 'cinema-button-custom-accessibility',
+            'name'=> get_string('cine', 'block_accessibility'),
+            'class'=> $clase_cinema
+        );
+
+        //Botón modo cine
+        $content .= html_writer::start_tag('ul', array('id' => 'block_accessibility_cinema'));
+        $content .= html_writer::start_tag('li', array('class' => 'access-button'));
+
+        $content .= html_writer::tag('button',$texto_button_cinema, $attr_cine);
+
+        $content .= html_writer::end_tag('li');
+        $content .= html_writer::end_tag('ul');
+
+        //Chequeo de accesibilidad (tota11y)
+
+        //Inicialización del botón chequeo accesibilidad
+        $attr_tota11y = array(
+            'title'=> get_string('setTota11y', 'block_accessibility'),
+            'id' => 'tota11y-button-custom-accessibility',
+            'name'=> get_string('tota11y', 'block_accessibility'),
+            'value'=> get_string('accesstota11y', 'block_accessibility')
+        );
+        $texto_tota11y='Accesibilidad';
+
+        //Botón tota11y (modo chequeo de accesibilidad)
+        $content .= html_writer::start_tag('ul', array('id' => 'block_accessibility_tota11y'));
+        $content .= html_writer::start_tag('li', array('class' => 'access-button'));
+
+        $content .= html_writer::tag('button',$texto_tota11y, $attr_tota11y);
+
+        $content .= html_writer::end_tag('li');
+        $content .= html_writer::end_tag('ul');
+
+
+        //FIN BLOQUE PERSONALIZADO
+
         $content .= $clearfix;
 
         // Display "settings saved" or etc.
@@ -257,7 +596,7 @@ class block_accessibility extends block_base {
         $jsdata['autoload_atbar'] = false;
         $jsdata['instance_id'] = $this->instance->id;
 
-        // Render ATBar.
+ /*       // Render ATBar.
         $showatbar = DEFAULT_SHOWATBAR;
         if (isset($this->config->showATbar)) {
             $showatbar = $this->config->showATbar;
@@ -307,6 +646,7 @@ class block_accessibility extends block_base {
         }
 
         $content .= html_writer::end_tag('div');
+ */
 
         // Loader icon.
         $spanattrs = array('id' => 'loader-icon');
@@ -333,6 +673,26 @@ class block_accessibility extends block_base {
             $this->page->requires->string_for_js('jsnotloggedin', 'block_accessibility');
             $this->page->requires->string_for_js('launchtoolbar', 'block_accessibility');
 
+            //BLOQUE PERSONALIZADO
+            $this->page->requires->string_for_js('escogerColorFilter', 'block_accessibility');
+            $this->page->requires->string_for_js('cancelarColorFilter', 'block_accessibility');
+            $this->page->requires->string_for_js('errorColorFilter', 'block_accessibility');
+
+
+            $this->page->requires->string_for_js('errorChangeFamily', 'block_accessibility');
+            $this->page->requires->string_for_js('errorContrast', 'block_accessibility');
+            $this->page->requires->string_for_js('WCAGaaaSI', 'block_accessibility');
+            $this->page->requires->string_for_js('WCAGaaaNO', 'block_accessibility');
+            $this->page->requires->string_for_js('errorContrastR', 'block_accessibility');
+            $this->page->requires->string_for_js('errorChangeLineHeight', 'block_accessibility');
+            $this->page->requires->string_for_js('errorChangeWordSpacing', 'block_accessibility');
+            $this->page->requires->string_for_js('errorReaderline', 'block_accessibility');
+            $this->page->requires->string_for_js('errorCursor', 'block_accessibility');
+            $this->page->requires->string_for_js('errorCinema', 'block_accessibility');
+            //$this->page->requires->string_for_js('errorTota11y', 'block_accessibility');
+            $this->page->requires->string_for_js('errorAlarma', 'block_accessibility');
+            //FIN BLOQUE PERSONALIZADO
+
             $jsmodule = array(
                     'name' => 'block_accessibility',
                     'fullpath' => self::JS_URL,
@@ -341,6 +701,8 @@ class block_accessibility extends block_base {
 
             // Include js script and pass the arguments.
             $this->page->requires->js_init_call('M.block_accessibility.init', $jsdata, false, $jsmodule);
+            $this->page->requires->js_call_amd('block_accessibility/zaccesibilidad_personalida','initialise');
+            $this->page->requires->js('/blocks/accessibility/tota11y.min.js', false);
         }
 
         return $this->content;

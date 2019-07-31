@@ -60,3 +60,43 @@ $string['color_input_error'] = 'Please enter a color in a format as such: #FF005
 $string['accessibility:addinstance'] = 'Add a new Accessibility block';
 $string['accessibility:myaddinstance'] = 'Add a new Accessibility block to My home';
 $string['jsnotloggedin'] = 'Error! Please check if you are logged-in to the system or contact your administrator';
+
+
+//TRADUCCION DE BLOQUE PERSONALIZADO
+
+$string['cpbackground'] = 'Establecer color de fondo';
+$string['cpfont'] = "Establecer color de letra";
+$string['errorContrast'] = "Se ha producido un error cambiando el esquema de color";
+$string['errorContrastR'] = "Se ha producido un error al restaurar el esquema de color";
+$string['WCAGaaaSI'] = "Cumple la normativa WCAG AAA";
+$string['WCAGaaaNO'] = "No cumple la normativa WCAG AAA";
+$string['cfilter'] = "Seleccionar filtro de color";
+$string['col5text'] = 'Filtro de Color'; //localizar
+$string['cancelarColorFilter'] = "Cancelar";
+$string['escogerColorFilter'] = "Escoger";
+$string['errorColorFilter'] = "Se ha producido un error al establecer el filtro de color";
+$string['listafuentes'] = "Lista de fuentes disponibles";
+$string['setfuente'] = "Establecer fuente";
+$string['errorChangeFamily'] = "Se ha producido un error al establecer la fuente";
+$string['setEspaciado'] = "Establecer Interlineado";
+$string['listaEspaciados'] = "Lista de valores de espaciado";
+$string['errorChangeLineHeight'] = "Se ha producido un error al establecer el interlineado";
+$string['errorChangeWordSpacing'] = "Se ha producido un error al establecer el espaciado de palabra";
+$string['setEspaciadoPalabra'] = "Establecer espaciado de palabra";
+$string['listaEspaciadosPalabra'] = "Lista de valores de espaciado de palabra";
+$string['setReaderLine'] = "Establecer línea de apoyo para lectura";
+$string['ReaderLine'] = "Línea de apoyo para lectura";
+$string['errorReaderline'] = "Se ha producido un error al establecer el apoyo de lectura";
+$string['cambiarCursor'] = "Cambiar tamaño del cursor";
+$string['cursor'] = "Tamaño del cursor";
+$string['errorCursor'] = "Se ha producido un error al cambiar el tamaño del cursor";
+$string['modoCine'] = "Cambiar al modo cine";
+$string['cine'] = "Modo cine";
+$string['errorCinema'] = "Se ha producido un error al establecer la funcion cine";
+$string['setTota11y'] = "Iniciar chequeo accesibilidad";
+$string['tota11y'] = "Chequeo accesibilidad";
+$string['accesstota11'] = "Accesibilidad";
+$string['errorTota11y'] = "Se ha producido un error al realizar el chequeo de accesibilidad";
+$string['setAlarma'] = "Establecer Alarma";
+$string['alarma'] = "Alarma";
+$string['errorAlarma'] = "Se ha producido un error en la alarma";

@@ -87,7 +87,7 @@ body.jsdisabled #block_accessibility_launchtoolbar {
 #accessibility_controls .access-button img {
     vertical-align: middle;
 }
--
+
 #accessibility_controls input {
     margin: 0 .2em;
 }
@@ -128,4 +128,44 @@ body.jsdisabled #block_accessibility_launchtoolbar {
 #sbar{
     top:42px !important;
     z-index: 999 !important; /* one less than profile menu */
+}
+input[type="color"]{
+    width: 35px;
+}
+#tota11y-toolbar{
+    display:none;
+}
+#accessibility_controls input#boton-color-picker-fondo, #accessibility_controls input#boton-color-picker-letra{
+    width:24.5px;
+    margin:0;
+    height: 28.5px;
+}
+#select-family-custom-accessibility, #select-line-height-custom-accessibility, #select-word-spacing-custom-accessibility{
+    width: 112px;
+}
+
+
+#accessibility_controls #reader-line-custom-accessibility input#block_accessibility_reader_line{
+    width: 112px;
+}
+
+
+#accessibility_controls #cinema-button-custom-accessibility{
+    width: 110px;
+}
+
+#accessibility_controls #block_accessibility_alarm li.access-button{
+    width: 112px;
+    margin:0;
+}
+#accessibility_controls #block_accessibility_alarm input#alarm-custom-accessibility{
+    width: 112px;
+    margin:0;
+}
+#accessibility_controls #block_accessibility_alarm #alarm-button-custom-accessibility{
+    width: 110px;
+}
+
+#accessibility_controls #tota11y-button-custom-accessibility{
+    width: 112px;
 }

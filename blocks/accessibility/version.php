@@ -23,8 +23,9 @@
  * to override the standard styles with this setting.                  (2)
  *
  * @package   block_accessibility                                      (4)
- * @copyright Copyright 2009 onwards Taunton's College                   (5)
- * @author Mark Johnson                                                 (6)
+ * @copyright Copyright 2019                    (5)
+ * @author Mark Johnson
+* @author Angela Castro (6)
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later (7)
  */
 

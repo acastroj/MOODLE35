@@ -58,6 +58,12 @@ M.block_accessibility = {
 				M.block_accessibility.changesize(e.target);
 			}
 		});
+        Y.all('#block_accessibility_textresize a').on('keypress', function(e) {
+            if (!e.target.hasClass('disabled')) {
+                // If it is, and the button's not disabled, pass it's id to the changesize function
+                M.block_accessibility.changesize(e.target);
+            }
+        });
 
 		Y.all('#block_accessibility_changecolour a').on('click', function(e) {
 			if (!e.target.hasClass('disabled')) {
@@ -65,6 +71,13 @@ M.block_accessibility = {
 				M.block_accessibility.changecolour(e.target);
 			}
 		});
+
+        Y.all('#block_accessibility_changecolour a').on('keypress', function(e) {
+            if (!e.target.hasClass('disabled')) {
+                // If it is, and the button's not disabled, pass it's id to the changecolour function
+                M.block_accessibility.changecolour(e.target);
+            }
+        });
 
 		// Remove href attributes from anchors
 		Y.all('#accessibility_controls a').each(function(node){

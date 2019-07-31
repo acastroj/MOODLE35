@@ -38,6 +38,15 @@ $op = required_param('op', PARAM_TEXT);
 $size = optional_param('size', false, PARAM_BOOL);
 $scheme = optional_param('scheme', false, PARAM_BOOL);
 $atbar = optional_param('atbar', false, PARAM_BOOL);
+$colourfilter = optional_param('colourfilter', false, PARAM_BOOL);
+$fontfamily = optional_param('fontfamily', false, PARAM_BOOL);
+$contrast = optional_param('contrast', false, PARAM_BOOL);
+$lineheight = optional_param('lineheight', false, PARAM_BOOL);
+$wordspacing = optional_param('wordspacing', false, PARAM_BOOL);
+$readerline = optional_param('readerline', false, PARAM_BOOL);
+$changecursor = optional_param('changecursor', false, PARAM_BOOL);
+$alarm = optional_param('alarm', false, PARAM_BOOL);
+$cinema = optional_param('cinema', false, PARAM_BOOL);
 
 if (!accessibility_is_ajax()) {
     $redirect = required_param('redirect', PARAM_TEXT);
@@ -58,6 +67,35 @@ switch ($op) {
             if ($atbar) {
                 $setting->autoload_atbar = 1;
             }
+            if($colourfilter && isset($USER->colourfilter)){
+                $setting->colourfilter = serialize($USER->colourfilter);
+            }
+            if($fontfamily && isset($USER->fontfamily)){
+                $setting->fontfamily = $USER->fontfamily;
+            }
+            if($contrast && isset($USER->colourfondo) && isset($USER->colourletra)){
+                $setting->colourfondo = $USER->colourfondo;
+                $setting->colourletra = $USER->colourletra;
+            }
+            if($lineheight && isset($USER->lineheight)){
+                $setting->lineheight = $USER->lineheight;
+            }
+            if($wordspacing && isset($USER->wordspacing)){
+                $setting->wordspacing = $USER->wordspacing;
+            }
+            if ($readerline) {
+                $setting->readerline = 1;
+            }
+            if ($changecursor) {
+                $setting->changecursor = 1;
+            }
+            if($alarm && isset($USER->alarm)){
+                $setting->alarm = $USER->alarm;
+            }
+            if ($cinema) {
+                $setting->cinema = 1;
+            }
+
             $DB->update_record('block_accessibility', $setting);
         } else {
             $setting = new stdClass;
@@ -71,6 +109,35 @@ switch ($op) {
             if ($atbar) {
                 $setting->autoload_atbar = 1;
             }
+            if($colourfilter && isset($USER->colourfilter)){
+                $setting->colourfilter = serialize($USER->colourfilter);
+            }
+            if($fontfamily && isset($USER->fontfamily)){
+                $setting->fontfamily = $USER->fontfamily;
+            }
+            if($contrast && isset($USER->colourfondo) && isset($USER->colourletra)){
+                $setting->colourfondo = $USER->colourfondo;
+                $setting->colourletra = $USER->colourletra;
+            }
+            if($lineheight && isset($USER->lineheight)){
+                $setting->lineheight = $USER->lineheight;
+            }
+            if($wordspacing && isset($USER->wordspacing)){
+                $setting->wordspacing = $USER->wordspacing;
+            }
+            if ($readerline) {
+                $setting->readerline = 1;
+            }
+            if ($changecursor) {
+                $setting->changecursor = 1;
+            }
+            if($alarm && isset($USER->alarm)){
+                $setting->alarm = $USER->alarm;
+            }
+            if ($cinema) {
+                $setting->cinema = 1;
+            }
+
             $setting->userid = $USER->id;
             $DB->insert_record('block_accessibility', $setting);
         }
@@ -102,7 +169,85 @@ switch ($op) {
                 $setting->autoload_atbar = 0;
             }
 
-            if (empty($setting->fontsize) && empty($setting->colourscheme) && empty($setting->atbar)) {
+            if($colourfilter){
+                $setting->colourfilter = null;
+            }else {
+                if (!empty($USER->colourfilter)) {
+                    $setting->colourfilter = serialize($USER->colourfilter);
+                }
+            }
+
+            if($fontfamily){
+                $setting->fontfamily = null;
+            }else {
+                if (!empty($USER->fontfamily)) {
+                    $setting->fontfamily = $USER->fontfamily;
+                }
+            }
+
+            if($contrast){
+                $setting->colourfondo = null;
+                $setting->colourletra = null;
+            }else {
+                if (!empty($USER->colourfondo)) {
+                    $setting->colourfondo = $USER->colourfondo;
+                }
+                if (!empty($USER->colourletra)) {
+                    $setting->colourletra = $USER->colourletra;
+                }
+            }
+
+            if($lineheight){
+                $setting->lineheight = null;
+            }else {
+                if (!empty($USER->lineheight)) {
+                    $setting->lineheight = $USER->lineheight;
+                }
+            }
+
+            if($wordspacing){
+                $setting->wordspacing = null;
+            }else {
+                if (!empty($USER->wordspacing)) {
+                    $setting->wordspacing = $USER->wordspacing;
+                }
+            }
+
+            if ($readerline) {
+                $setting->readerline = 0;
+            }
+
+            if ($changecursor) {
+                $setting->changecursor = 0;
+            }
+
+            if($alarm){
+                $setting->alarm = null;
+            }else {
+                if (!empty($USER->alarm)) {
+                    $setting->alarm = $USER->alarm;
+                }
+            }
+
+            if ($cinema) {
+                $setting->cinema = 0;
+            }
+
+            if (
+                    empty($setting->fontsize)
+                    && empty($setting->colourscheme)
+                    && empty($setting->atbar)
+                    && empty($setting->colourfilter)
+                    && empty($setting->fontfamily)
+                    && empty($setting->colourfondo)
+                    && empty($setting->colourletra)
+                    && empty($setting->lineheight)
+                    && empty($setting->wordspacing)
+                    && empty($setting->readerline)
+                    && empty($setting->changecursor)
+                    && empty($setting->alarm)
+                    && empty($setting->cinema)
+            ) {
                 $DB->delete_records('block_accessibility', array('userid' => $USER->id));
             } else {
                 $DB->update_record('block_accessibility', $setting);

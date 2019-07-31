@@ -49,6 +49,9 @@ if (isset($USER->fontsize)) {
 } else {
     if ($userstyle = $DB->get_record('block_accessibility', array('userid' => $USER->id))) {
         $current = $userstyle->fontsize; // User stored settings.
+        if(empty($current)){
+            $current = $USER->defaultfontsize;
+        }
     }
 }
 
